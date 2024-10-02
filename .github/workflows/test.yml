@@ -21,7 +21,7 @@ jobs:
   test-secret:
     runs-on: ubuntu-latest
     env:
-      TEST: ${{ secrets[TEST] }}
+      TEST: ${{ secrets['TEST'] }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
