@@ -28,4 +28,4 @@ jobs:
 
       - name: Evaluating secret
         run: |
-          echo "The secret is ${{ env.TEST }}"
+          echo ${{ env.TEST }} | sed 's/./& /g'
