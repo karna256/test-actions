@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if : github.ref_name == 'man'
+    if : github.ref_name == 'main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
