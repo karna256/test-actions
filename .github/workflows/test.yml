@@ -15,4 +15,5 @@ jobs:
 
       - name: Evaluating expressions
         run: |
-          echo "The branch is ${{ github.ref_name }} & event is ${{ github.event_name }}"
+          echo "The branch is ${{ github.ref_name }} & \
+          event is ${{ github.event_name }}"
