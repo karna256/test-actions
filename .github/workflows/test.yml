@@ -17,3 +17,13 @@ jobs:
         run: |
           echo "The branch is ${{ github.ref_name }} & \
           event is ${{ github.event_name }}"
+
+  test-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Evaluating secret
+        run: |
+          echo "The secret is ${{ secrets['TEST'] }}"
