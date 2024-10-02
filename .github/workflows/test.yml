@@ -12,6 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run tests
-        if: github.event_name == 'push'
+        if: github.ref_name == 'main'
         run: |
           echo "Works"
