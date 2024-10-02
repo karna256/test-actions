@@ -6,12 +6,13 @@ on:
       - main
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-    if : github.ref_name == 'main'
+    if: github.ref_name == 'main' && github.event_name == 'push'
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Run tests
+
+      - name: Evaluating expressions
         run: |
-          echo "Works"
+          echo "The branch is ${{ github.ref_name }} & event is ${{ github.event_name }}"
