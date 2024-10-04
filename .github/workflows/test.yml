@@ -10,7 +10,7 @@ on:
         - 'true'
         - 'false'
       environment:
-        description: 'Environment'
+        description: 'Comma-separated list of environments'
         required: true
 
 env:
@@ -27,7 +27,7 @@ jobs:
   maintenance_mode:
     strategy:
       matrix:
-        environment: ${{ fromJson('["' + github.event.inputs.environment.replace(',', '","') + '"]') }}
+        environment: ${{ fromJson('["' + join(fromJson('["' + github.event.inputs.environment + '"]').split(','), '","') + '"]') }}
     name: Maintenance Mode for ${{ matrix.environment }}
     runs-on: ubuntu-22.04
     steps:
