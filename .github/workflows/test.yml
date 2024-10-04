@@ -25,10 +25,18 @@ permissions:
   issues: read
 
 jobs:
+  setup_environment:
+    name: Setup Matrix
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup matrix
+        run: |
+          echo "test=$(jq -cn --argjson environments ${{ github.event.inputs.environment }} '{environment: $environments}')" >> $GITHUB_ENV 
+
   maintenance_mode:
     strategy:
-      matrix:
-        environment: ${{ fromJson(format('[{0}]', join(github.event.inputs.environment.split(','), '","'))) }}
+      matrix: ${{ env.test }}
+
     name: Maintenance Mode for ${{ matrix.environment }}
     runs-on: ubuntu-22.04
     steps:
