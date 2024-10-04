@@ -27,7 +27,7 @@ jobs:
   maintenance_mode:
     strategy:
       matrix:
-        environment: ${{ github.event.inputs.environment }}
+        environment: ${{ fromJson('["' + github.event.inputs.environment.replace(',', '","') + '"]') }}
     name: Maintenance Mode for ${{ matrix.environment }}
     runs-on: ubuntu-22.04
     steps:
