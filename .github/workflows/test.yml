@@ -25,10 +25,31 @@ permissions:
   issues: read
 
 jobs:
+  prepare_matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          input="${{ github.event.inputs.environment }}"
+          output="{\"environment\": ["
+          IFS=',' read -ra items <<< "$input"
+          for i in "${!items[@]}"; do
+            output+="\"${items[i]}\""
+            if [ $i -lt $((${#items[@]} - 1)) ]; then
+              output+=", "
+            fi
+          done
+          output+="]}"
+          echo "$output"
+          echo "matrix=$output" >> $GITHUB_OUTPUT
+
   maintenance_mode:
+    needs: prepare_matrix
     strategy:
-      matrix:
-        environment: ${{ split(github.event.inputs.environment, ',') }}
+      matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
 
     name: Maintenance Mode for ${{ matrix.environment }}
     runs-on: ubuntu-22.04
