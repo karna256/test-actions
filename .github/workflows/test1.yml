@@ -1,0 +1,60 @@
+name: Deploy Maintenance Page
+
+on:
+  workflow_dispatch:
+    inputs:
+      maintenance_mode:
+        description: 'Enable maintenance mode'
+        required: true
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      environment:
+        description: 'Comma-separated list of environments'
+        required: true
+
+env:
+  REACT_APP_SITE_MAINTENANCE_MODE: ${{ github.event.inputs.maintenance_mode }}
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
+  repository-projects: read
+  issues: read
+
+jobs:
+  prepare_matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          input="${{ github.event.inputs.environment }}"
+          output="{\"environment\": ["
+          IFS=',' read -ra items <<< "$input"
+          for i in "${!items[@]}"; do
+            output+="\"${items[i]}\""
+            if [ $i -lt $((${#items[@]} - 1)) ]; then
+              output+=", "
+            fi
+          done
+          output+="]}"
+          echo "$output"
+          echo "matrix=$output" >> $GITHUB_OUTPUT
+
+  maintenance_mode:
+    needs: prepare_matrix
+    strategy:
+      matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
+
+    name: Maintenance Mode for ${{ matrix.environment }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Test
+        run: |
+          echo "Maintenance: $REACT_APP_SITE_MAINTENANCE_MODE"
+          echo "Environment: ${{ matrix.environment }}"
