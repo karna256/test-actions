@@ -1,31 +1,37 @@
-name: Test Actions
-
+name: Deploy Maintenance Page
 on:
-  push :
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      maintenance_mode:
+        description: 'Enable maintenance mode'
+        required: true
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      environment:
+        description: 'Environment'
+        required: true
+
+env:
+  REACT_APP_SITE_MAINTENANCE_MODE: ${{ github.event.inputs.maintenance_mode }}
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
+  repository-projects: read
+  issues: read
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref_name == 'main' && github.event_name == 'push'
+  maintenance_mode:
+    strategy:
+      matrix:
+        environment: ${{ github.event.inputs.environment }}
+    name: Maintenance Mode for ${{ matrix.environment }}
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Evaluating expressions
+      - name: Test
         run: |
-          echo "The branch is ${{ github.ref_name }} & \
-          event is ${{ github.event_name }}"
-
-  test-secret:
-    runs-on: ubuntu-latest
-    env:
-      TEST: ${{ secrets['TEST'] }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Evaluating secret
-        run: |
-          echo ${{ env.TEST }} | sed 's/./& /g'
+          echo "Maintenance: $REACT_APP_SITE_MAINTENANCE_MODE"
+          echo "Environment: ${{ matrix.environment }}"
