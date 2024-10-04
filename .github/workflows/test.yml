@@ -1,4 +1,5 @@
 name: Deploy Maintenance Page
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,8 +8,8 @@ on:
         required: true
         type: choice
         options:
-        - 'true'
-        - 'false'
+          - 'true'
+          - 'false'
       environment:
         description: 'Comma-separated list of environments'
         required: true
@@ -27,7 +28,7 @@ jobs:
   maintenance_mode:
     strategy:
       matrix:
-        environment: ${{ fromJson('["' + join(fromJson('["' + github.event.inputs.environment + '"]').split(','), '","') + '"]') }}
+        environment: ${{ fromJson(format('[{0}]', join(github.event.inputs.environment.split(','), '","'))) }}
     name: Maintenance Mode for ${{ matrix.environment }}
     runs-on: ubuntu-22.04
     steps:
